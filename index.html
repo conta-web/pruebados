@@ -798,6 +798,10 @@
   <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // ======= VARIABLES GLOBALES =======
+    let clientes = [];
+    let declaraciones = [];
+
     // ======= STORAGE =======
     function cargarDesdeStorage(clave) {
       try {
@@ -808,9 +812,6 @@
         return [];
       }
     }
-
-    let clientes = cargarDesdeStorage("clientesIVA");
-    let declaraciones = cargarDesdeStorage("declaracionesIVA");
 
     function guardarStorage() {
       localStorage.setItem("clientesIVA", JSON.stringify(clientes));
@@ -836,6 +837,8 @@
     function actualizarInfoRegimen() {
       const sel = document.getElementById("dec_idCliente");
       const info = document.getElementById("infoRegimen");
+      if (!sel || !info) return;
+
       const idxCliente = parseInt(sel.value, 10);
 
       if (isNaN(idxCliente) || !clientes[idxCliente]) {
@@ -1032,7 +1035,7 @@
     // ======= DASHBOARD + AGENDA =======
     function renderDashboard() {
       const spActivos = document.getElementById("dashClientesActivos");
-      if (!spActivos) return; // por seguridad
+      if (!spActivos) return;
 
       const activos = clientes.filter(c => c.estado === "Activo").length;
       const inactivos = clientes.length - activos;
@@ -1162,6 +1165,8 @@
       const selClientes = document.getElementById("dec_idCliente");
       const selFiltroGan = document.getElementById("filtroGanCliente");
 
+      if (!tbody) return;
+
       tbody.innerHTML = "";
       const riesgos = calcularRiesgoPorCliente();
 
@@ -1215,41 +1220,13 @@
     }
 
     function resetFormCliente() {
-      document.getElementById("formCliente").reset();
+      const form = document.getElementById("formCliente");
+      if (!form) return;
+      form.reset();
       document.getElementById("clienteIndex").value = "";
       document.getElementById("cli_estado").value = "Activo";
       document.getElementById("cli_regimen").value = "Pequeño contribuyente";
     }
-
-    document
-      .getElementById("formCliente")
-      .addEventListener("submit", function (e) {
-        e.preventDefault();
-        const idx = document.getElementById("clienteIndex").value;
-
-        const cliente = {
-          nombre: document.getElementById("cli_nombre").value.trim(),
-          nit: document.getElementById("cli_nit").value.trim(),
-          nrc: document.getElementById("cli_nrc").value.trim(),
-          giro: document.getElementById("cli_giro").value.trim(),
-          correo: document.getElementById("cli_correo").value.trim(),
-          telefono: document.getElementById("cli_telefono").value.trim(),
-          regimen: document.getElementById("cli_regimen").value,
-          fechaInscripcion:
-            document.getElementById("cli_fechaInscripcion").value,
-          estado: document.getElementById("cli_estado").value,
-        };
-
-        if (idx === "") {
-          clientes.push(cliente);
-        } else {
-          clientes[parseInt(idx)] = cliente;
-        }
-
-        guardarStorage();
-        renderClientes();
-        resetFormCliente();
-      });
 
     function editarCliente(i) {
       const c = clientes[i];
@@ -1280,6 +1257,7 @@
     // ======= DECLARACIONES =======
     function renderDeclaraciones() {
       const tbody = document.getElementById("tablaDeclaraciones");
+      if (!tbody) return;
       tbody.innerHTML = "";
 
       calcularSaldosIVA();
@@ -1323,7 +1301,9 @@
     }
 
     function resetFormDeclaracion() {
-      document.getElementById("formDeclaracion").reset();
+      const form = document.getElementById("formDeclaracion");
+      if (!form) return;
+      form.reset();
       document.getElementById("decIndex").value = "";
       document.getElementById("dec_estado").value = "Pendiente";
       document.getElementById("dec_ventasGravadas").value = 0;
@@ -1337,48 +1317,6 @@
       document.getElementById("dec_isrEstimado").value = 0;
       actualizarInfoRegimen();
     }
-
-    document
-      .getElementById("formDeclaracion")
-      .addEventListener("submit", function (e) {
-        e.preventDefault();
-        const idx = document.getElementById("decIndex").value;
-
-        const declaracion = {
-          idCliente: parseInt(document.getElementById("dec_idCliente").value, 10),
-          mes: parseInt(document.getElementById("dec_mes").value, 10),
-          anio: parseInt(document.getElementById("dec_anio").value, 10),
-          ventasGravadas: parseFloat(document.getElementById("dec_ventasGravadas").value) || 0,
-          ventasExentas: parseFloat(document.getElementById("dec_ventasExentas").value) || 0,
-          comprasGravadas: parseFloat(document.getElementById("dec_comprasGravadas").value) || 0,
-          comprasExentas: parseFloat(document.getElementById("dec_comprasExentas").value) || 0,
-          creditoFiscal: parseFloat(document.getElementById("dec_creditoFiscal").value) || 0,
-          debitoFiscal: parseFloat(document.getElementById("dec_debitoFiscal").value) || 0,
-          ivaPagar: parseFloat(document.getElementById("dec_ivaPagar").value) || 0,
-          pagoCuenta: parseFloat(document.getElementById("dec_pagoCuenta").value) || 0,
-          isrEstimado: parseFloat(document.getElementById("dec_isrEstimado").value) || 0,
-          fechaPresentacion: document.getElementById("dec_fechaPresentacion").value,
-          estado: document.getElementById("dec_estado").value,
-          observaciones: document.getElementById("dec_observaciones").value.trim(),
-        };
-
-        if (isNaN(declaracion.idCliente)) {
-          alert("Selecciona un cliente.");
-          return;
-        }
-
-        if (idx === "") {
-          declaraciones.push(declaracion);
-        } else {
-          declaraciones[parseInt(idx)] = declaracion;
-        }
-
-        guardarStorage();
-        renderDeclaraciones();
-        resetFormDeclaracion();
-        renderGanancias();
-        renderDashboard();
-      });
 
     function editarDeclaracion(i) {
       const d = declaraciones[i];
@@ -1517,14 +1455,98 @@
       }
     }
 
-    // ======= EVENTO CAMBIO CLIENTE EN DECLARACIÓN =======
-    document.getElementById("dec_idCliente").addEventListener("change", actualizarInfoRegimen);
+    // ======= INIT DOM =======
+    window.addEventListener("DOMContentLoaded", () => {
+      // Cargar datos desde localStorage
+      clientes = cargarDesdeStorage("clientesIVA");
+      declaraciones = cargarDesdeStorage("declaracionesIVA");
 
-    // ======= INIT =======
-    renderClientes();
-    renderDeclaraciones();
-    renderGanancias();
-    renderDashboard();
+      // Eventos formularios
+      const formCliente = document.getElementById("formCliente");
+      if (formCliente) {
+        formCliente.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const idx = document.getElementById("clienteIndex").value;
+
+          const cliente = {
+            nombre: document.getElementById("cli_nombre").value.trim(),
+            nit: document.getElementById("cli_nit").value.trim(),
+            nrc: document.getElementById("cli_nrc").value.trim(),
+            giro: document.getElementById("cli_giro").value.trim(),
+            correo: document.getElementById("cli_correo").value.trim(),
+            telefono: document.getElementById("cli_telefono").value.trim(),
+            regimen: document.getElementById("cli_regimen").value,
+            fechaInscripcion:
+              document.getElementById("cli_fechaInscripcion").value,
+            estado: document.getElementById("cli_estado").value,
+          };
+
+          if (idx === "") {
+            clientes.push(cliente);
+          } else {
+            clientes[parseInt(idx)] = cliente;
+          }
+
+          guardarStorage();
+          renderClientes();
+          resetFormCliente();
+        });
+      }
+
+      const formDeclaracion = document.getElementById("formDeclaracion");
+      if (formDeclaracion) {
+        formDeclaracion.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const idx = document.getElementById("decIndex").value;
+
+          const declaracion = {
+            idCliente: parseInt(document.getElementById("dec_idCliente").value, 10),
+            mes: parseInt(document.getElementById("dec_mes").value, 10),
+            anio: parseInt(document.getElementById("dec_anio").value, 10),
+            ventasGravadas: parseFloat(document.getElementById("dec_ventasGravadas").value) || 0,
+            ventasExentas: parseFloat(document.getElementById("dec_ventasExentas").value) || 0,
+            comprasGravadas: parseFloat(document.getElementById("dec_comprasGravadas").value) || 0,
+            comprasExentas: parseFloat(document.getElementById("dec_comprasExentas").value) || 0,
+            creditoFiscal: parseFloat(document.getElementById("dec_creditoFiscal").value) || 0,
+            debitoFiscal: parseFloat(document.getElementById("dec_debitoFiscal").value) || 0,
+            ivaPagar: parseFloat(document.getElementById("dec_ivaPagar").value) || 0,
+            pagoCuenta: parseFloat(document.getElementById("dec_pagoCuenta").value) || 0,
+            isrEstimado: parseFloat(document.getElementById("dec_isrEstimado").value) || 0,
+            fechaPresentacion: document.getElementById("dec_fechaPresentacion").value,
+            estado: document.getElementById("dec_estado").value,
+            observaciones: document.getElementById("dec_observaciones").value.trim(),
+          };
+
+          if (isNaN(declaracion.idCliente)) {
+            alert("Selecciona un cliente.");
+            return;
+          }
+
+          if (idx === "") {
+            declaraciones.push(declaracion);
+          } else {
+            declaraciones[parseInt(idx)] = declaracion;
+          }
+
+          guardarStorage();
+          renderDeclaraciones();
+          resetFormDeclaracion();
+          renderGanancias();
+          renderDashboard();
+        });
+      }
+
+      const selDecCliente = document.getElementById("dec_idCliente");
+      if (selDecCliente) {
+        selDecCliente.addEventListener("change", actualizarInfoRegimen);
+      }
+
+      // Render inicial
+      renderClientes();
+      renderDeclaraciones();
+      renderGanancias();
+      renderDashboard();
+    });
   </script>
 </body>
 </html>
