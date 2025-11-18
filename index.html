@@ -10,356 +10,1521 @@
   />
   <style>
     body {
-      background: #f8f9fa;
+      background: #f4f5f7;
       padding: 20px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
     }
     .card {
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+      border: none;
     }
-    .table td, .table th {
-      vertical-align: middle;
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+    .app-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-soft {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+    }
+    .nav-pills .nav-link {
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .nav-pills .nav-link.active {
+      background: #0f172a;
+    }
+    .table thead {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .chip-activo {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .chip-inactivo {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .chip-pendiente {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .chip-presentado {
+      background: #e0f2fe;
+      color: #075985;
+    }
+    .chip-multa {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .chip-riesgo-bajo {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .chip-riesgo-medio {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .chip-riesgo-alto {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .chip-riesgo-sin {
+      background: #e5e7eb;
+      color: #374151;
     }
     .btn-sm {
-      border-radius: 20px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      padding-inline: 10px;
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .text-regimen {
+      font-size: 0.75rem;
+      color: #4b5563;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 class="text-center mb-4">📋 Sistema de Control de Clientes IVA</h2>
+    <!-- HEADER -->
+    <div class="app-header">
+      <div class="app-title">
+        📊 Sistema Control de Clientes IVA
+        <span class="badge-soft">Versión local (navegador)</span>
+      </div>
+      <small class="text-muted">
+        Basado en Ley de IVA (13%) y Código Tributario de El Salvador. <br>
+        Datos guardados en este navegador con <strong>localStorage</strong>.
+      </small>
+    </div>
 
-    <!-- FORMULARIO -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <h5>Registrar Cliente</h5>
-        <form id="formCliente">
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label>Nombre / Razón Social</label>
-              <input type="text" id="nombre" class="form-control" required />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>NIT</label>
-              <input type="text" id="nit" class="form-control" required />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>NRC</label>
-              <input type="text" id="nrc" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Giro</label>
-              <input type="text" id="giro" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Correo</label>
-              <input type="email" id="correo" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Teléfono</label>
-              <input type="text" id="telefono" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Régimen</label>
-              <select id="regimen" class="form-select">
-                <option value="Común">Común</option>
-                <option value="Pequeño contribuyente">Pequeño contribuyente</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Fecha inscripción IVA</label>
-              <input type="date" id="fechaInscripcion" class="form-control" />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label>Estado</label>
-              <select id="estado" class="form-select">
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-              </select>
+    <!-- NAV TABS -->
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="pills-dashboard-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-dashboard"
+          type="button"
+          role="tab"
+        >
+          Inicio / Dashboard
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pills-clientes-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-clientes"
+          type="button"
+          role="tab"
+        >
+          Clientes IVA
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pills-declaraciones-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-declaraciones"
+          type="button"
+          role="tab"
+        >
+          Declaraciones mensuales
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="pills-ganancias-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#pills-ganancias"
+          type="button"
+          role="tab"
+        >
+          Ganancias estimadas
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="pills-tabContent">
+      <!-- ================== PESTAÑA DASHBOARD ================== -->
+      <div
+        class="tab-pane fade show active"
+        id="pills-dashboard"
+        role="tabpanel"
+      >
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">👥 Clientes</div>
+                <p class="mb-1"><small>Activos</small></p>
+                <div class="fs-4 fw-bold" id="dashClientesActivos">0</div>
+                <p class="mb-1 mt-2"><small>Inactivos</small></p>
+                <div class="fs-6" id="dashClientesInactivos">0</div>
+              </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary mt-2">Guardar Cliente</button>
-          <button type="reset" class="btn btn-secondary mt-2">Limpiar</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- LISTADO -->
-    <div class="card">
-      <div class="card-body">
-        <h5>Listado de Clientes</h5>
-        <table class="table table-striped table-hover mt-3">
-          <thead class="table-dark">
-            <tr>
-              <th>#</th>
-              <th>Nombre</th>
-              <th>NIT</th>
-              <th>NRC</th>
-              <th>Régimen</th>
-              <th>Estado</th>
-              <th>Dec.</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaClientes"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- MÓDULO NUEVO: DECLARACIONES -->
-    <div class="card mt-4">
-      <div class="card-body">
-        <h5>Control de Declaraciones IVA</h5>
-
-        <!-- Selección de cliente -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label>Cliente</label>
-            <select id="clienteDeclaracion" class="form-select">
-              <!-- Se llena por JS -->
-            </select>
+          <div class="col-md-5">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">📅 Declaraciones mes actual</div>
+                <p class="mb-1">
+                  Presentadas: <strong id="dashDecPresentadas">0</strong>
+                </p>
+                <p class="mb-1">
+                  Pendientes: <strong id="dashDecPendientes">0</strong>
+                </p>
+                <p class="mb-0">
+                  Con multa: <strong id="dashDecMulta">0</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">💸 Impuestos del mes</div>
+                <p class="mb-1">
+                  IVA: <strong>$<span id="dashImpIVA">0.00</span></strong>
+                </p>
+                <p class="mb-1">
+                  Pago a cuenta:
+                  <strong>$<span id="dashImpPagoCuenta">0.00</span></strong>
+                </p>
+                <p class="mb-0">
+                  ISR estimado:
+                  <strong>$<span id="dashImpISR">0.00</span></strong>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Formulario de declaración -->
-        <form id="formDeclaracion" class="mb-3">
-          <div class="row">
-            <div class="col-md-3 mb-3">
-              <label>Período</label>
-              <input type="month" id="periodo" class="form-control" required />
-            </div>
-            <div class="col-md-3 mb-3">
-              <label>Fecha presentación</label>
-              <input type="date" id="fechaPresentacion" class="form-control" />
-            </div>
-            <div class="col-md-3 mb-3">
-              <label>Monto IVA</label>
-              <input type="number" step="0.01" id="montoIVA" class="form-control" />
-            </div>
-            <div class="col-md-3 mb-3">
-              <label>Estado</label>
-              <select id="estadoDeclaracion" class="form-select">
-                <option value="Pendiente">Pendiente</option>
-                <option value="Presentada">Presentada</option>
-                <option value="Vencida">Vencida</option>
-              </select>
-            </div>
-            <div class="col-12 mb-3">
-              <label>Nota</label>
-              <textarea id="nota" class="form-control" rows="2"></textarea>
+        <div class="row g-3 mt-3">
+          <div class="col-md-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">🚦 Riesgo por clientes</div>
+                <p class="mb-1">
+                  Riesgo bajo: <strong id="dashRiesgoBajo">0</strong>
+                </p>
+                <p class="mb-1">
+                  Riesgo medio: <strong id="dashRiesgoMedio">0</strong>
+                </p>
+                <p class="mb-1">
+                  Riesgo alto: <strong id="dashRiesgoAlto">0</strong>
+                </p>
+                <p class="mb-0 text-muted">
+                  <small>Basado en últimos 12 meses de declaraciones.</small>
+                </p>
+              </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-sm">Agregar declaración</button>
-          <button type="reset" class="btn btn-secondary btn-sm">Limpiar</button>
-        </form>
-
-        <!-- Tabla de declaraciones por cliente -->
-        <table class="table table-striped table-hover">
-          <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>Período</th>
-              <th>Fecha presentación</th>
-              <th>Monto IVA</th>
-              <th>Estado</th>
-              <th>Nota</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaDeclaraciones"></tbody>
-        </table>
+          <div class="col-md-8">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">
+                  🗓️ Agenda tributaria
+                </div>
+                <div class="section-subtitle">
+                  Próximos vencimientos de declaraciones. Ordenado por días
+                  restantes.
+                </div>
+                <div class="table-responsive" style="max-height:260px;">
+                  <table class="table table-hover align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Periodo</th>
+                        <th>Vence</th>
+                        <th>Estado</th>
+                        <th>Días</th>
+                        <th>Prioridad</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaAgenda"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
+      <!-- ================== PESTAÑA CLIENTES ================== -->
+      <div
+        class="tab-pane fade"
+        id="pills-clientes"
+        role="tabpanel"
+      >
+        <div class="row g-3">
+          <!-- FORM CLIENTE -->
+          <div class="col-lg-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">
+                  🧾 Cliente IVA
+                </div>
+                <div class="section-subtitle">
+                  Registra o edita los datos generales de tus contribuyentes.
+                  La clasificación (pequeño, mediano, gran contribuyente) se basa en los criterios de la DGII
+                  sobre volumen de operaciones y obligaciones como agente de retención/percepción.
+                </div>
+
+                <form id="formCliente">
+                  <input type="hidden" id="clienteIndex" />
+                  <div class="mb-2">
+                    <label class="form-label">Nombre / Razón Social</label>
+                    <input
+                      type="text"
+                      id="cli_nombre"
+                      class="form-control form-control-sm"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">NIT</label>
+                    <input
+                      type="text"
+                      id="cli_nit"
+                      class="form-control form-control-sm"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">NRC</label>
+                    <input
+                      type="text"
+                      id="cli_nrc"
+                      class="form-control form-control-sm"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Giro</label>
+                    <input
+                      type="text"
+                      id="cli_giro"
+                      class="form-control form-control-sm"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Correo</label>
+                    <input
+                      type="email"
+                      id="cli_correo"
+                      class="form-control form-control-sm"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Teléfono</label>
+                    <input
+                      type="text"
+                      id="cli_telefono"
+                      class="form-control form-control-sm"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Tipo de contribuyente</label>
+                    <select
+                      id="cli_regimen"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="Pequeño contribuyente">Pequeño contribuyente</option>
+                      <option value="Mediano contribuyente">Mediano contribuyente</option>
+                      <option value="Gran contribuyente">Gran contribuyente</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Fecha inscripción IVA</label>
+                    <input
+                      type="date"
+                      id="cli_fechaInscripcion"
+                      class="form-control form-control-sm"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select id="cli_estado" class="form-select form-select-sm">
+                      <option value="Activo">Activo</option>
+                      <option value="Inactivo">Inactivo</option>
+                    </select>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button
+                      type="submit"
+                      class="btn btn-dark btn-sm flex-grow-1"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      onclick="resetFormCliente()"
+                    >
+                      Nuevo
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- LISTA CLIENTES -->
+          <div class="col-lg-8">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">
+                  📚 Listado de Clientes
+                </div>
+                <div class="section-subtitle">
+                  Selecciona un cliente para usarlo luego en las declaraciones y en el análisis de ganancias.
+                </div>
+
+                <div class="table-responsive" style="max-height: 420px;">
+                  <table class="table table-hover align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>NIT</th>
+                        <th>Tipo contribuyente</th>
+                        <th>Riesgo</th>
+                        <th>Estado</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaClientes"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================== PESTAÑA DECLARACIONES ================== -->
+      <div class="tab-pane fade" id="pills-declaraciones" role="tabpanel">
+        <div class="row g-3">
+          <!-- FORM DECLARACIÓN -->
+          <div class="col-lg-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">
+                  📅 Declaración Mensual
+                </div>
+                <div class="section-subtitle">
+                  Cálculo simplificado según normativa salvadoreña:  
+                  IVA general 13% (Ley de IVA), pago a cuenta 1.5% sobre ventas y ISR estimado 25% sobre utilidad.  
+                  Ajusta manualmente si tu caso requiere un tratamiento especial.
+                </div>
+
+                <form id="formDeclaracion">
+                  <input type="hidden" id="decIndex" />
+                  <div class="mb-2">
+                    <label class="form-label">Cliente</label>
+                    <select
+                      id="dec_idCliente"
+                      class="form-select form-select-sm"
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                    </select>
+                    <div id="infoRegimen" class="text-regimen mt-1">
+                      Selecciona un cliente para ver su clasificación como contribuyente.
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6 mb-2">
+                      <label class="form-label">Mes</label>
+                      <select
+                        id="dec_mes"
+                        class="form-select form-select-sm"
+                        required
+                      >
+                        <option value="">Mes...</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                      </select>
+                    </div>
+                    <div class="col-6 mb-2">
+                      <label class="form-label">Año</label>
+                      <input
+                        type="number"
+                        id="dec_anio"
+                        class="form-control form-control-sm"
+                        min="2000"
+                        max="2100"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div class="mb-2">
+                    <label class="form-label">Ventas gravadas</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_ventasGravadas"
+                      class="form-control form-control-sm"
+                      value="0"
+                      oninput="recalcularImpuestos()"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Ventas exentas</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_ventasExentas"
+                      class="form-control form-control-sm"
+                      value="0"
+                      oninput="recalcularImpuestos()"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Compras gravadas</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_comprasGravadas"
+                      class="form-control form-control-sm"
+                      value="0"
+                      oninput="recalcularImpuestos()"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Compras exentas</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_comprasExentas"
+                      class="form-control form-control-sm"
+                      value="0"
+                      oninput="recalcularImpuestos()"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Crédito fiscal</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_creditoFiscal"
+                      class="form-control form-control-sm"
+                      value="0"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Débito fiscal</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_debitoFiscal"
+                      class="form-control form-control-sm"
+                      value="0"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">IVA a pagar (positivo) / a favor (negativo)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_ivaPagar"
+                      class="form-control form-control-sm"
+                      value="0"
+                    />
+                  </div>
+
+                  <div class="mb-2">
+                    <label class="form-label">Pago a Cuenta (1.5% sobre ventas)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_pagoCuenta"
+                      class="form-control form-control-sm"
+                      value="0"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">ISR estimado (25% utilidad simple)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      id="dec_isrEstimado"
+                      class="form-control form-control-sm"
+                      value="0"
+                    />
+                  </div>
+
+                  <div class="mb-2">
+                    <label class="form-label">Fecha presentación</label>
+                    <input
+                      type="date"
+                      id="dec_fechaPresentacion"
+                      class="form-control form-control-sm"
+                    />
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Estado</label>
+                    <select
+                      id="dec_estado"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="Pendiente">Pendiente</option>
+                      <option value="Presentado">Presentado</option>
+                      <option value="Con multa">Con multa</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Observaciones</label>
+                    <textarea
+                      id="dec_observaciones"
+                      rows="2"
+                      class="form-control form-control-sm"
+                    ></textarea>
+                  </div>
+
+                  <div class="d-flex gap-2">
+                    <button
+                      type="submit"
+                      class="btn btn-dark btn-sm flex-grow-1"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      onclick="resetFormDeclaracion()"
+                    >
+                      Nuevo
+                    </button>
+                  </div>
+
+                  <small class="text-muted d-block mt-3">
+                    Nota: la clasificación como gran o mediano contribuyente también implica
+                    obligaciones como agente de retención/percepción según el Código Tributario.
+                  </small>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- LISTA DECLARACIONES -->
+          <div class="col-lg-8">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">
+                  📑 Resumen de Declaraciones
+                </div>
+                <div class="section-subtitle">
+                  Vista rápida del estado de cumplimiento mensual por cliente.  
+                  El campo <strong>“IVA favor acum.”</strong> muestra el IVA a favor acumulado por cliente.
+                </div>
+
+                <div class="table-responsive" style="max-height: 420px;">
+                  <table class="table table-hover align-middle mb-2">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Tipo contribuyente</th>
+                        <th>Mes/Año</th>
+                        <th>Débito</th>
+                        <th>Crédito</th>
+                        <th>IVA pagar</th>
+                        <th>Pago cta</th>
+                        <th>ISR est.</th>
+                        <th>IVA favor acum.</th>
+                        <th>Estado</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaDeclaraciones"></tbody>
+                  </table>
+                </div>
+
+                <div class="mt-2 text-end">
+                  <small class="text-muted">
+                    Tip: más adelante esto se puede exportar a Excel o PDF.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================== PESTAÑA GANANCIAS ================== -->
+      <div class="tab-pane fade" id="pills-ganancias" role="tabpanel">
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="section-title">
+                  💰 Ganancias estimadas después de impuestos
+                </div>
+                <div class="section-subtitle">
+                  Ganancia neta aproximada usando info de las declaraciones:  
+                  <strong>Ganancia neta ≈ (Ventas - Compras) - (IVA pagado + Pago a cuenta + ISR estimado)</strong>.  
+                  El IVA negativo se considera “a favor” y no se descuenta como pago del mes.
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Filtrar por cliente</label>
+                    <select id="filtroGanCliente" class="form-select form-select-sm" onchange="renderGanancias()">
+                      <option value="">Todos</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="section-title">
+                  🔎 Detalle por periodo
+                </div>
+                <div class="table-responsive" style="max-height: 260px;">
+                  <table class="table table-hover align-middle mb-2">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Tipo contribuyente</th>
+                        <th>Mes/Año</th>
+                        <th>Ventas</th>
+                        <th>Compras</th>
+                        <th>Utilidad</th>
+                        <th>IVA pagado</th>
+                        <th>Pago cta</th>
+                        <th>ISR</th>
+                        <th>Imp. totales</th>
+                        <th>Ganancia neta</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaGananciasDetalle"></tbody>
+                  </table>
+                </div>
+
+                <hr class="my-3">
+
+                <div class="section-title">
+                  📊 Resumen por cliente
+                </div>
+                <div class="table-responsive" style="max-height: 220px;">
+                  <table class="table table-sm align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th>Cliente</th>
+                        <th>Tipo contribuyente</th>
+                        <th>Ventas</th>
+                        <th>Compras</th>
+                        <th>Utilidad</th>
+                        <th>IVA pagado</th>
+                        <th>Pago cta</th>
+                        <th>ISR</th>
+                        <th>Imp. totales</th>
+                        <th>Ganancia neta</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaGananciasClientes"></tbody>
+                  </table>
+                </div>
+
+                <small class="text-muted d-block mt-3">
+                  Referencia legal: Ley del IVA (tasa general 13%) y Código Tributario de El Salvador  
+                  sobre agentes de retención/percepción y clasificación de contribuyentes.
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ========================
-    //   CLIENTES (ORIGINAL)
-    // ========================
-    let clientes = JSON.parse(localStorage.getItem("clientesIVA")) || [];
+    // ======= STORAGE =======
+    function cargarDesdeStorage(clave) {
+      try {
+        const data = localStorage.getItem(clave);
+        return data ? JSON.parse(data) : [];
+      } catch (e) {
+        console.warn("Error leyendo", clave, e);
+        return [];
+      }
+    }
 
-    // Asegurar que todos tengan el arreglo de declaraciones
-    clientes = clientes.map(c => ({
-      ...c,
-      declaraciones: c.declaraciones || []
-    }));
+    let clientes = cargarDesdeStorage("clientesIVA");
+    let declaraciones = cargarDesdeStorage("declaracionesIVA");
 
-    function guardarClientes() {
+    function guardarStorage() {
       localStorage.setItem("clientesIVA", JSON.stringify(clientes));
+      localStorage.setItem("declaracionesIVA", JSON.stringify(declaraciones));
     }
 
-    function mostrarClientes() {
-      const tabla = document.getElementById("tablaClientes");
-      tabla.innerHTML = "";
-      clientes.forEach((c, i) => {
-        const numDec = c.declaraciones ? c.declaraciones.length : 0;
-        tabla.innerHTML += `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${c.nombre}</td>
-            <td>${c.nit}</td>
-            <td>${c.nrc || "-"}</td>
-            <td>${c.regimen}</td>
-            <td>${c.estado}</td>
-            <td>${numDec}</td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick="editarCliente(${i})">Editar</button>
-              <button class="btn btn-sm btn-danger" onclick="eliminarCliente(${i})">Eliminar</button>
-            </td>
-          </tr>`;
-      });
+    // ======= CONSTANTES IMPUESTOS =======
+    const TASA_IVA = 0.13;
+    const TASA_PAGO_CTA = 0.015;
+    const TASA_ISR = 0.25;
+
+    // ======= UTILIDADES GENERALES =======
+    function mostrarNombreRegimen(valor) {
+      if (!valor) return "-";
+      const v = valor.toLowerCase();
+      if (v.includes("peque")) return "Pequeño contribuyente";
+      if (v.includes("mediano")) return "Mediano contribuyente";
+      if (v.includes("gran")) return "Gran contribuyente";
+      if (v.includes("común") || v.includes("general")) return "Mediano contribuyente";
+      return valor;
     }
 
-    document.getElementById("formCliente").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const cliente = {
-        nombre: document.getElementById("nombre").value,
-        nit: document.getElementById("nit").value,
-        nrc: document.getElementById("nrc").value,
-        giro: document.getElementById("giro").value,
-        correo: document.getElementById("correo").value,
-        telefono: document.getElementById("telefono").value,
-        regimen: document.getElementById("regimen").value,
-        fechaInscripcion: document.getElementById("fechaInscripcion").value,
-        estado: document.getElementById("estado").value,
-        declaraciones: [] // nuevo campo para cada cliente
+    function actualizarInfoRegimen() {
+      const sel = document.getElementById("dec_idCliente");
+      const info = document.getElementById("infoRegimen");
+      const idxCliente = parseInt(sel.value, 10);
+
+      if (isNaN(idxCliente) || !clientes[idxCliente]) {
+        info.textContent = "Selecciona un cliente para ver su clasificación como contribuyente.";
+        return;
+      }
+
+      const reg = mostrarNombreRegimen(clientes[idxCliente].regimen);
+
+      if (reg === "Gran contribuyente") {
+        info.textContent =
+          "Gran contribuyente: clasificado así por la Administración Tributaria; usualmente actúa como agente de retención y percepción de IVA.";
+      } else if (reg === "Mediano contribuyente") {
+        info.textContent =
+          "Mediano contribuyente: volumen de operaciones intermedio; también puede ser designado agente de retención/percepción según Código Tributario.";
+      } else if (reg === "Pequeño contribuyente") {
+        info.textContent =
+          "Pequeño contribuyente: menor volumen de operaciones. Mantiene las obligaciones de IVA (13%) y renta, pero con menor impacto que medianos y grandes.";
+      } else {
+        info.textContent = "Clasificación personalizada de contribuyente.";
+      }
+    }
+
+    function obtenerPeriodoActual() {
+      const hoy = new Date();
+      return {
+        mes: hoy.getMonth() + 1,
+        anio: hoy.getFullYear(),
       };
-      clientes.push(cliente);
-      guardarClientes();
-      mostrarClientes();
-      actualizarSelectClientes();
-      e.target.reset();
-    });
-
-    function eliminarCliente(i) {
-      if (confirm("¿Eliminar este cliente?")) {
-        clientes.splice(i, 1);
-        guardarClientes();
-        mostrarClientes();
-        actualizarSelectClientes();
-        mostrarDeclaracionesCliente(); // limpia si no hay cliente
-      }
     }
 
-    // Mantengo la lógica original: al editar, se rellena y se elimina el registro
-    function editarCliente(i) {
-      const c = clientes[i];
-      document.getElementById("nombre").value = c.nombre;
-      document.getElementById("nit").value = c.nit;
-      document.getElementById("nrc").value = c.nrc;
-      document.getElementById("giro").value = c.giro;
-      document.getElementById("correo").value = c.correo;
-      document.getElementById("telefono").value = c.telefono;
-      document.getElementById("regimen").value = c.regimen;
-      document.getElementById("fechaInscripcion").value = c.fechaInscripcion;
-      document.getElementById("estado").value = c.estado;
-      // OJO: aquí se pierde también sus declaraciones, igual que en el original
-      eliminarCliente(i);
+    function calcularFechaVencimiento(dec) {
+      // Vencimiento: día 21 del mes siguiente al periodo declarado
+      let mes = dec.mes + 1;
+      let anio = dec.anio;
+      if (mes === 13) {
+        mes = 1;
+        anio++;
+      }
+      return new Date(anio, mes - 1, 21);
     }
 
-    // ========================
-    //   DECLARACIONES (NUEVO)
-    // ========================
-    const selectCliente = document.getElementById("clienteDeclaracion");
-    const tablaDeclaraciones = document.getElementById("tablaDeclaraciones");
+    function normalizarFechaSinHora(fecha) {
+      return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+    }
 
-    function actualizarSelectClientes() {
-      selectCliente.innerHTML = "";
-      if (clientes.length === 0) {
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "No hay clientes registrados";
-        selectCliente.appendChild(opt);
-        return;
-      }
+    function formatFechaCorta(fecha) {
+      const d = String(fecha.getDate()).padStart(2, "0");
+      const m = String(fecha.getMonth() + 1).padStart(2, "0");
+      const y = fecha.getFullYear();
+      return `${d}/${m}/${y}`;
+    }
 
-      clientes.forEach((c, i) => {
-        const opt = document.createElement("option");
-        opt.value = i; // índice del cliente
-        opt.textContent = `${c.nombre} - ${c.nit}`;
-        selectCliente.appendChild(opt);
+    // ======= CÁLCULO IMPUESTOS (El Salvador – simplificado) =======
+    function recalcularImpuestos() {
+      const ventasGrav = parseFloat(document.getElementById("dec_ventasGravadas").value) || 0;
+      const ventasExen = parseFloat(document.getElementById("dec_ventasExentas").value) || 0;
+      const comprasGrav = parseFloat(document.getElementById("dec_comprasGravadas").value) || 0;
+      const comprasExen = parseFloat(document.getElementById("dec_comprasExentas").value) || 0;
+
+      const debito = ventasGrav * TASA_IVA;
+      const credito = comprasGrav * TASA_IVA;
+      const ivaPagar = debito - credito;  // puede ser negativo (IVA a favor)
+
+      document.getElementById("dec_debitoFiscal").value = debito.toFixed(2);
+      document.getElementById("dec_creditoFiscal").value = credito.toFixed(2);
+      document.getElementById("dec_ivaPagar").value = ivaPagar.toFixed(2);
+
+      const basePagoCuenta = ventasGrav + ventasExen;
+      const pagoCuenta = basePagoCuenta * TASA_PAGO_CTA;
+      document.getElementById("dec_pagoCuenta").value = pagoCuenta.toFixed(2);
+
+      const utilidadEstimada =
+        (ventasGrav + ventasExen) - (comprasGrav + comprasExen);
+      const isrEstimado = utilidadEstimada > 0 ? utilidadEstimada * TASA_ISR : 0;
+      document.getElementById("dec_isrEstimado").value = isrEstimado.toFixed(2);
+    }
+
+    // ======= IVA A FAVOR ACUMULADO =======
+    function calcularSaldosIVA() {
+      declaraciones.forEach(d => {
+        delete d.saldoIVA;
       });
-    }
 
-    function mostrarDeclaracionesCliente() {
-      tablaDeclaraciones.innerHTML = "";
-      const indice = selectCliente.value;
-      if (indice === "" || clientes.length === 0) {
-        return;
-      }
-
-      const cliente = clientes[indice];
-      const declaraciones = cliente.declaraciones || [];
+      const porCliente = {};
 
       declaraciones.forEach((d, i) => {
-        tablaDeclaraciones.innerHTML += `
+        if (!porCliente[d.idCliente]) {
+          porCliente[d.idCliente] = [];
+        }
+        porCliente[d.idCliente].push(i);
+      });
+
+      Object.keys(porCliente).forEach(id => {
+        const indices = porCliente[id];
+
+        indices.sort((a, b) => {
+          const da = declaraciones[a];
+          const db = declaraciones[b];
+          if (da.anio !== db.anio) return da.anio - db.anio;
+          return da.mes - db.mes;
+        });
+
+        let saldoFavor = 0;
+
+        indices.forEach(idx => {
+          const d = declaraciones[idx];
+          const iva = Number(d.ivaPagar || 0);
+
+          if (iva < 0) {
+            saldoFavor += Math.abs(iva);
+          } else if (iva > 0) {
+            if (saldoFavor >= iva) {
+              saldoFavor -= iva;
+            } else {
+              saldoFavor = 0;
+            }
+          }
+
+          d.saldoIVA = saldoFavor;
+        });
+      });
+    }
+
+    // ======= CÁLCULO RIESGO POR CLIENTE =======
+    function calcularRiesgoPorCliente() {
+      const hoy = normalizarFechaSinHora(new Date());
+      const inicioPeriodo = new Date(hoy.getFullYear(), hoy.getMonth() - 11, 1);
+
+      const stats = {};
+
+      declaraciones.forEach(d => {
+        const fechaPeriodo = new Date(d.anio, d.mes - 1, 1);
+        if (fechaPeriodo < inicioPeriodo) return;
+
+        if (!stats[d.idCliente]) {
+          stats[d.idCliente] = {
+            total: 0,
+            presentadas: 0,
+            multas: 0,
+            pendientesEnPlazo: 0,
+            pendientesVencidas: 0,
+          };
+        }
+        const st = stats[d.idCliente];
+        st.total++;
+
+        const venc = calcularFechaVencimiento(d);
+        const dias = Math.floor((calcularFechaVencimiento(d) - hoy) / (1000 * 60 * 60 * 24));
+
+        if (d.estado === "Presentado") {
+          st.presentadas++;
+        } else if (d.estado === "Con multa") {
+          st.multas++;
+        } else if (d.estado === "Pendiente") {
+          if (dias >= 0) st.pendientesEnPlazo++;
+          else st.pendientesVencidas++;
+        }
+      });
+
+      const resultado = {};
+      clientes.forEach((c, idx) => {
+        const st = stats[idx];
+        if (!st || st.total === 0) {
+          resultado[idx] = {
+            nivel: "Sin historial",
+            etiqueta: "Sin historial",
+            clase: "chip chip-riesgo-sin",
+          };
+          return;
+        }
+
+        let nivel, etiqueta, clase;
+        if (st.multas >= 3 || st.pendientesVencidas >= 2) {
+          nivel = "Alto";
+          etiqueta = "Alto";
+          clase = "chip chip-riesgo-alto";
+        } else if (st.multas >= 1 || st.pendientesVencidas === 1) {
+          nivel = "Medio";
+          etiqueta = "Medio";
+          clase = "chip chip-riesgo-medio";
+        } else {
+          nivel = "Bajo";
+          etiqueta = "Bajo";
+          clase = "chip chip-riesgo-bajo";
+        }
+
+        resultado[idx] = { nivel, etiqueta, clase };
+      });
+
+      return resultado;
+    }
+
+    // ======= DASHBOARD + AGENDA =======
+    function renderDashboard() {
+      const spActivos = document.getElementById("dashClientesActivos");
+      if (!spActivos) return; // por seguridad
+
+      const activos = clientes.filter(c => c.estado === "Activo").length;
+      const inactivos = clientes.length - activos;
+
+      spActivos.textContent = activos;
+      document.getElementById("dashClientesInactivos").textContent = inactivos;
+
+      const { mes, anio } = obtenerPeriodoActual();
+      let presentadas = 0;
+      let pendientes = 0;
+      let conMulta = 0;
+      let totalIva = 0;
+      let totalPago = 0;
+      let totalIsr = 0;
+
+      declaraciones.forEach(d => {
+        if (d.mes === mes && d.anio === anio) {
+          if (d.estado === "Presentado") presentadas++;
+          else if (d.estado === "Con multa") conMulta++;
+          else pendientes++;
+
+          totalIva += Math.max(0, Number(d.ivaPagar || 0));
+          totalPago += Number(d.pagoCuenta || 0);
+          totalIsr += Number(d.isrEstimado || 0);
+        }
+      });
+
+      document.getElementById("dashDecPresentadas").textContent = presentadas;
+      document.getElementById("dashDecPendientes").textContent = pendientes;
+      document.getElementById("dashDecMulta").textContent = conMulta;
+
+      document.getElementById("dashImpIVA").textContent = totalIva.toFixed(2);
+      document.getElementById("dashImpPagoCuenta").textContent = totalPago.toFixed(2);
+      document.getElementById("dashImpISR").textContent = totalIsr.toFixed(2);
+
+      const riesgos = calcularRiesgoPorCliente();
+      let bajos = 0, medios = 0, altos = 0;
+
+      clientes.forEach((c, idx) => {
+        const r = riesgos[idx];
+        if (!r) return;
+        if (r.nivel === "Bajo") bajos++;
+        else if (r.nivel === "Medio") medios++;
+        else if (r.nivel === "Alto") altos++;
+      });
+
+      document.getElementById("dashRiesgoBajo").textContent = bajos;
+      document.getElementById("dashRiesgoMedio").textContent = medios;
+      document.getElementById("dashRiesgoAlto").textContent = altos;
+
+      // Agenda tributaria
+      const tbodyAgenda = document.getElementById("tablaAgenda");
+      tbodyAgenda.innerHTML = "";
+
+      if (!declaraciones.length) {
+        tbodyAgenda.innerHTML = `
           <tr>
-            <td>${i + 1}</td>
-            <td>${d.periodo || ""}</td>
-            <td>${d.fechaPresentacion || ""}</td>
-            <td>${d.montoIVA || ""}</td>
-            <td>${d.estado || ""}</td>
-            <td>${d.nota || ""}</td>
-            <td>
-              <button class="btn btn-sm btn-danger" onclick="eliminarDeclaracion(${i})">
-                Eliminar
-              </button>
+            <td colspan="6" class="text-center text-muted">
+              No hay declaraciones registradas.
             </td>
+          </tr>`;
+        return;
+      }
+
+      const hoy = normalizarFechaSinHora(new Date());
+      const items = [];
+
+      declaraciones.forEach(d => {
+        const cli = clientes[d.idCliente];
+        const nombre = cli ? cli.nombre : "(cliente eliminado)";
+        const periodo = `${d.mes}/${d.anio}`;
+        const venc = calcularFechaVencimiento(d);
+        const vencSinHora = normalizarFechaSinHora(venc);
+        const dias = Math.floor((vencSinHora - hoy) / (1000 * 60 * 60 * 24));
+
+        let prioridad, chipClase;
+        if (dias < 0) {
+          prioridad = "Vencido";
+          chipClase = "chip chip-multa";
+        } else if (dias <= 5) {
+          prioridad = "Alta";
+          chipClase = "chip chip-multa";
+        } else if (dias <= 10) {
+          prioridad = "Media";
+          chipClase = "chip chip-pendiente";
+        } else {
+          prioridad = "Baja";
+          chipClase = "chip chip-presentado";
+        }
+
+        let textoDias;
+        if (dias === 0) textoDias = "Hoy";
+        else if (dias > 0) textoDias = `En ${dias} días`;
+        else textoDias = `Hace ${Math.abs(dias)} días`;
+
+        items.push({
+          nombre,
+          periodo,
+          venc,
+          estado: d.estado,
+          dias,
+          prioridad,
+          chipClase,
+          textoDias,
+        });
+      });
+
+      items.sort((a, b) => a.dias - b.dias);
+
+      items.forEach(it => {
+        tbodyAgenda.innerHTML += `
+          <tr>
+            <td>${it.nombre}</td>
+            <td>${it.periodo}</td>
+            <td>${formatFechaCorta(it.venc)}</td>
+            <td>${it.estado}</td>
+            <td>${it.textoDias}</td>
+            <td><span class="${it.chipClase}">${it.prioridad}</span></td>
           </tr>
         `;
       });
     }
 
-    document.getElementById("formDeclaracion").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const indice = selectCliente.value;
-      if (indice === "" || clientes.length === 0) {
-        alert("Primero selecciona un cliente.");
-        return;
+    // ======= CLIENTES =======
+    function renderClientes() {
+      const tbody = document.getElementById("tablaClientes");
+      const selClientes = document.getElementById("dec_idCliente");
+      const selFiltroGan = document.getElementById("filtroGanCliente");
+
+      tbody.innerHTML = "";
+      const riesgos = calcularRiesgoPorCliente();
+
+      if (selClientes) {
+        selClientes.innerHTML = '<option value="">Seleccione...</option>';
+      }
+      if (selFiltroGan) {
+        const oldVal = selFiltroGan.value;
+        selFiltroGan.innerHTML = '<option value="">Todos</option>';
+        clientes.forEach((c, i) => {
+          selFiltroGan.innerHTML += `<option value="${i}">${c.nombre}</option>`;
+        });
+        const optExists = Array.from(selFiltroGan.options).some(o => o.value === oldVal);
+        if (optExists) selFiltroGan.value = oldVal;
       }
 
-      const declaracion = {
-        periodo: document.getElementById("periodo").value,
-        fechaPresentacion: document.getElementById("fechaPresentacion").value,
-        montoIVA: document.getElementById("montoIVA").value,
-        estado: document.getElementById("estadoDeclaracion").value,
-        nota: document.getElementById("nota").value
-      };
+      clientes.forEach((c, i) => {
+        const estadoClass =
+          c.estado === "Activo" ? "chip chip-activo" : "chip chip-inactivo";
 
-      const cliente = clientes[indice];
-      if (!cliente.declaraciones) {
-        cliente.declaraciones = [];
-      }
-      cliente.declaraciones.push(declaracion);
+        const infoRiesgo = riesgos[i] || {
+          etiqueta: "Sin historial",
+          clase: "chip chip-riesgo-sin",
+        };
 
-      guardarClientes();
-      mostrarDeclaracionesCliente();
-      mostrarClientes(); // para actualizar la columna Dec.
-      e.target.reset();
-    });
+        tbody.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${c.nombre}</td>
+            <td>${c.nit || "-"}</td>
+            <td>${mostrarNombreRegimen(c.regimen)}</td>
+            <td><span class="${infoRiesgo.clase}">${infoRiesgo.etiqueta}</span></td>
+            <td><span class="${estadoClass}">${c.estado}</span></td>
+            <td class="text-end">
+              <button class="btn btn-outline-dark btn-sm" onclick="editarCliente(${i})">Editar</button>
+              <button class="btn btn-outline-danger btn-sm" onclick="eliminarCliente(${i})">Borrar</button>
+            </td>
+          </tr>
+        `;
 
-    function eliminarDeclaracion(indiceDec) {
-      const indiceCliente = selectCliente.value;
-      if (indiceCliente === "" || clientes.length === 0) return;
+        if (selClientes) {
+          selClientes.innerHTML += `
+            <option value="${i}">${c.nombre} (${c.nit || "sin NIT"})</option>
+          `;
+        }
+      });
 
-      if (confirm("¿Eliminar esta declaración?")) {
-        const cliente = clientes[indiceCliente];
-        cliente.declaraciones.splice(indiceDec, 1);
-        guardarClientes();
-        mostrarDeclaracionesCliente();
-        mostrarClientes();
+      actualizarInfoRegimen();
+      renderGanancias();
+      renderDashboard();
+    }
+
+    function resetFormCliente() {
+      document.getElementById("formCliente").reset();
+      document.getElementById("clienteIndex").value = "";
+      document.getElementById("cli_estado").value = "Activo";
+      document.getElementById("cli_regimen").value = "Pequeño contribuyente";
+    }
+
+    document
+      .getElementById("formCliente")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        const idx = document.getElementById("clienteIndex").value;
+
+        const cliente = {
+          nombre: document.getElementById("cli_nombre").value.trim(),
+          nit: document.getElementById("cli_nit").value.trim(),
+          nrc: document.getElementById("cli_nrc").value.trim(),
+          giro: document.getElementById("cli_giro").value.trim(),
+          correo: document.getElementById("cli_correo").value.trim(),
+          telefono: document.getElementById("cli_telefono").value.trim(),
+          regimen: document.getElementById("cli_regimen").value,
+          fechaInscripcion:
+            document.getElementById("cli_fechaInscripcion").value,
+          estado: document.getElementById("cli_estado").value,
+        };
+
+        if (idx === "") {
+          clientes.push(cliente);
+        } else {
+          clientes[parseInt(idx)] = cliente;
+        }
+
+        guardarStorage();
+        renderClientes();
+        resetFormCliente();
+      });
+
+    function editarCliente(i) {
+      const c = clientes[i];
+      document.getElementById("clienteIndex").value = i;
+      document.getElementById("cli_nombre").value = c.nombre;
+      document.getElementById("cli_nit").value = c.nit;
+      document.getElementById("cli_nrc").value = c.nrc;
+      document.getElementById("cli_giro").value = c.giro;
+      document.getElementById("cli_correo").value = c.correo;
+      document.getElementById("cli_telefono").value = c.telefono;
+      document.getElementById("cli_regimen").value =
+        mostrarNombreRegimen(c.regimen);
+      document.getElementById("cli_fechaInscripcion").value =
+        c.fechaInscripcion;
+      document.getElementById("cli_estado").value = c.estado;
+    }
+
+    function eliminarCliente(i) {
+      if (!confirm("¿Seguro que deseas eliminar este cliente? Esto no borra sus declaraciones existentes.")) return;
+      clientes.splice(i, 1);
+      guardarStorage();
+      renderClientes();
+      renderDeclaraciones();
+      renderGanancias();
+      renderDashboard();
+    }
+
+    // ======= DECLARACIONES =======
+    function renderDeclaraciones() {
+      const tbody = document.getElementById("tablaDeclaraciones");
+      tbody.innerHTML = "";
+
+      calcularSaldosIVA();
+
+      declaraciones.forEach((d, i) => {
+        const clienteObj = clientes[d.idCliente];
+        const clienteNombre = clienteObj ? clienteObj.nombre : "(cliente eliminado)";
+        const regimen = clienteObj ? mostrarNombreRegimen(clienteObj.regimen) : "-";
+
+        const chipClass =
+          d.estado === "Presentado"
+            ? "chip chip-presentado"
+            : d.estado === "Con multa"
+            ? "chip chip-multa"
+            : "chip chip-pendiente";
+
+        const saldoIVA = Number(d.saldoIVA || 0);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${clienteNombre}</td>
+            <td>${regimen}</td>
+            <td>${d.mes}/${d.anio}</td>
+            <td>$${Number(d.debitoFiscal || 0).toFixed(2)}</td>
+            <td>$${Number(d.creditoFiscal || 0).toFixed(2)}</td>
+            <td>$${Number(d.ivaPagar || 0).toFixed(2)}</td>
+            <td>$${Number(d.pagoCuenta || 0).toFixed(2)}</td>
+            <td>$${Number(d.isrEstimado || 0).toFixed(2)}</td>
+            <td>$${saldoIVA.toFixed(2)}</td>
+            <td><span class="${chipClass}">${d.estado}</span></td>
+            <td class="text-end">
+              <button class="btn btn-outline-dark btn-sm" onclick="editarDeclaracion(${i})">Editar</button>
+              <button class="btn btn-outline-danger btn-sm" onclick="eliminarDeclaracion(${i})">Borrar</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      renderGanancias();
+      renderDashboard();
+    }
+
+    function resetFormDeclaracion() {
+      document.getElementById("formDeclaracion").reset();
+      document.getElementById("decIndex").value = "";
+      document.getElementById("dec_estado").value = "Pendiente";
+      document.getElementById("dec_ventasGravadas").value = 0;
+      document.getElementById("dec_ventasExentas").value = 0;
+      document.getElementById("dec_comprasGravadas").value = 0;
+      document.getElementById("dec_comprasExentas").value = 0;
+      document.getElementById("dec_creditoFiscal").value = 0;
+      document.getElementById("dec_debitoFiscal").value = 0;
+      document.getElementById("dec_ivaPagar").value = 0;
+      document.getElementById("dec_pagoCuenta").value = 0;
+      document.getElementById("dec_isrEstimado").value = 0;
+      actualizarInfoRegimen();
+    }
+
+    document
+      .getElementById("formDeclaracion")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+        const idx = document.getElementById("decIndex").value;
+
+        const declaracion = {
+          idCliente: parseInt(document.getElementById("dec_idCliente").value, 10),
+          mes: parseInt(document.getElementById("dec_mes").value, 10),
+          anio: parseInt(document.getElementById("dec_anio").value, 10),
+          ventasGravadas: parseFloat(document.getElementById("dec_ventasGravadas").value) || 0,
+          ventasExentas: parseFloat(document.getElementById("dec_ventasExentas").value) || 0,
+          comprasGravadas: parseFloat(document.getElementById("dec_comprasGravadas").value) || 0,
+          comprasExentas: parseFloat(document.getElementById("dec_comprasExentas").value) || 0,
+          creditoFiscal: parseFloat(document.getElementById("dec_creditoFiscal").value) || 0,
+          debitoFiscal: parseFloat(document.getElementById("dec_debitoFiscal").value) || 0,
+          ivaPagar: parseFloat(document.getElementById("dec_ivaPagar").value) || 0,
+          pagoCuenta: parseFloat(document.getElementById("dec_pagoCuenta").value) || 0,
+          isrEstimado: parseFloat(document.getElementById("dec_isrEstimado").value) || 0,
+          fechaPresentacion: document.getElementById("dec_fechaPresentacion").value,
+          estado: document.getElementById("dec_estado").value,
+          observaciones: document.getElementById("dec_observaciones").value.trim(),
+        };
+
+        if (isNaN(declaracion.idCliente)) {
+          alert("Selecciona un cliente.");
+          return;
+        }
+
+        if (idx === "") {
+          declaraciones.push(declaracion);
+        } else {
+          declaraciones[parseInt(idx)] = declaracion;
+        }
+
+        guardarStorage();
+        renderDeclaraciones();
+        resetFormDeclaracion();
+        renderGanancias();
+        renderDashboard();
+      });
+
+    function editarDeclaracion(i) {
+      const d = declaraciones[i];
+      document.getElementById("decIndex").value = i;
+      document.getElementById("dec_idCliente").value = d.idCliente;
+      document.getElementById("dec_mes").value = d.mes;
+      document.getElementById("dec_anio").value = d.anio;
+      document.getElementById("dec_ventasGravadas").value = d.ventasGravadas;
+      document.getElementById("dec_ventasExentas").value = d.ventasExentas;
+      document.getElementById("dec_comprasGravadas").value = d.comprasGravadas;
+      document.getElementById("dec_comprasExentas").value = d.comprasExentas;
+      document.getElementById("dec_creditoFiscal").value = d.creditoFiscal;
+      document.getElementById("dec_debitoFiscal").value = d.debitoFiscal;
+      document.getElementById("dec_ivaPagar").value = d.ivaPagar;
+      document.getElementById("dec_pagoCuenta").value = d.pagoCuenta || 0;
+      document.getElementById("dec_isrEstimado").value = d.isrEstimado || 0;
+      document.getElementById("dec_fechaPresentacion").value = d.fechaPresentacion;
+      document.getElementById("dec_estado").value = d.estado;
+      document.getElementById("dec_observaciones").value = d.observaciones;
+      actualizarInfoRegimen();
+    }
+
+    function eliminarDeclaracion(i) {
+      if (!confirm("¿Seguro que deseas eliminar esta declaración?")) return;
+      declaraciones.splice(i, 1);
+      guardarStorage();
+      renderDeclaraciones();
+      renderGanancias();
+      renderDashboard();
+    }
+
+    // ======= GANANCIAS ESTIMADAS =======
+    function renderGanancias() {
+      const tbodyDet = document.getElementById("tablaGananciasDetalle");
+      const tbodyCli = document.getElementById("tablaGananciasClientes");
+      const selFiltro = document.getElementById("filtroGanCliente");
+
+      if (!tbodyDet || !tbodyCli || !selFiltro) return;
+
+      tbodyDet.innerHTML = "";
+      tbodyCli.innerHTML = "";
+
+      const filtroVal = selFiltro.value;
+      const filtroId = filtroVal !== "" ? parseInt(filtroVal, 10) : null;
+
+      const resumen = {};
+
+      declaraciones.forEach(d => {
+        if (filtroId !== null && d.idCliente !== filtroId) return;
+
+        const cli = clientes[d.idCliente];
+        const nombre = cli ? cli.nombre : "(cliente eliminado)";
+        const regimen = cli ? mostrarNombreRegimen(cli.regimen) : "-";
+
+        const ventas = (Number(d.ventasGravadas || 0) + Number(d.ventasExentas || 0));
+        const compras = (Number(d.comprasGravadas || 0) + Number(d.comprasExentas || 0));
+        const utilidad = ventas - compras;
+        const ivaPagado = Math.max(0, Number(d.ivaPagar || 0));
+        const pagoCta = Number(d.pagoCuenta || 0);
+        const isr = Number(d.isrEstimado || 0);
+        const impuestosTotales = ivaPagado + pagoCta + isr;
+        const gananciaNeta = utilidad - impuestosTotales;
+
+        tbodyDet.innerHTML += `
+          <tr>
+            <td>${nombre}</td>
+            <td>${regimen}</td>
+            <td>${d.mes}/${d.anio}</td>
+            <td>$${ventas.toFixed(2)}</td>
+            <td>$${compras.toFixed(2)}</td>
+            <td>$${utilidad.toFixed(2)}</td>
+            <td>$${ivaPagado.toFixed(2)}</td>
+            <td>$${pagoCta.toFixed(2)}</td>
+            <td>$${isr.toFixed(2)}</td>
+            <td>$${impuestosTotales.toFixed(2)}</td>
+            <td>$${gananciaNeta.toFixed(2)}</td>
+          </tr>
+        `;
+
+        const key = d.idCliente;
+        if (!resumen[key]) {
+          resumen[key] = {
+            nombre,
+            regimen,
+            ventas: 0,
+            compras: 0,
+            utilidad: 0,
+            iva: 0,
+            pagoCta: 0,
+            isr: 0,
+            impuestosTotales: 0,
+            gananciaNeta: 0,
+          };
+        }
+        resumen[key].ventas += ventas;
+        resumen[key].compras += compras;
+        resumen[key].utilidad += utilidad;
+        resumen[key].iva += ivaPagado;
+        resumen[key].pagoCta += pagoCta;
+        resumen[key].isr += isr;
+        resumen[key].impuestosTotales += impuestosTotales;
+        resumen[key].gananciaNeta += gananciaNeta;
+      });
+
+      Object.keys(resumen).forEach(k => {
+        const r = resumen[k];
+        tbodyCli.innerHTML += `
+          <tr>
+            <td>${r.nombre}</td>
+            <td>${r.regimen}</td>
+            <td>$${r.ventas.toFixed(2)}</td>
+            <td>$${r.compras.toFixed(2)}</td>
+            <td>$${r.utilidad.toFixed(2)}</td>
+            <td>$${r.iva.toFixed(2)}</td>
+            <td>$${r.pagoCta.toFixed(2)}</td>
+            <td>$${r.isr.toFixed(2)}</td>
+            <td>$${r.impuestosTotales.toFixed(2)}</td>
+            <td>$${r.gananciaNeta.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      if (!declaraciones.length || tbodyDet.innerHTML === "") {
+        tbodyDet.innerHTML = `
+          <tr>
+            <td colspan="11" class="text-center text-muted">
+              No hay declaraciones registradas (o no hay datos para el filtro actual).
+            </td>
+          </tr>`;
+        tbodyCli.innerHTML = `
+          <tr>
+            <td colspan="10" class="text-center text-muted">
+              Sin resumen disponible.
+            </td>
+          </tr>`;
       }
     }
 
-    selectCliente.addEventListener("change", mostrarDeclaracionesCliente);
+    // ======= EVENTO CAMBIO CLIENTE EN DECLARACIÓN =======
+    document.getElementById("dec_idCliente").addEventListener("change", actualizarInfoRegimen);
 
-    // ========================
-    //   INICIO
-    // ========================
-    mostrarClientes();
-    actualizarSelectClientes();
-    mostrarDeclaracionesCliente();
+    // ======= INIT =======
+    renderClientes();
+    renderDeclaraciones();
+    renderGanancias();
+    renderDashboard();
   </script>
 </body>
 </html>
